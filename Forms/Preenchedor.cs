@@ -102,6 +102,14 @@ namespace TPPreenchedor.Forms
         private TextBox txtDadosPreencherUsrUol;
         private Label label6;
         private Button btnPreencherUsrUol;
+        private GroupBox groupBoxNlsa;
+        private TextBox txtDadosPreencherUsrNlsa;
+        private Label label7;
+        private Button btnPreencherUsrNlsa;
+        private GroupBox groupBoxTexto;
+        private TextBox txtDadosPreencherTexto;
+        private Label label8;
+        private Button btnPreencherTexto;
         private Label label2;
 
         private const string LoginUsrTpb = @"tpb\palladino.11";
@@ -109,6 +117,8 @@ namespace TPPreenchedor.Forms
         private const string LoginUsrTpbAdm2 = @"tpb\palladino.11-adm2";
         private const string LoginUsrTpItau = @"tpitau\palladino.11";
         private const string LoginUsrUol = @"uol\palladino.11.uol";
+        private const string LoginUsrNlsa = @"nlsa\palladino.11";
+        private const string LoginTextoLivre = "texto_livre";
 
         public Preenchedor()
         {
@@ -164,11 +174,15 @@ namespace TPPreenchedor.Forms
             txtDadosPreencherUsrTpbAdm2.Enabled = enabled;
             txtDadosPreencherUsrTpItau.Enabled = enabled;
             txtDadosPreencherUsrUol.Enabled = enabled;
+            txtDadosPreencherUsrNlsa.Enabled = enabled;
+            txtDadosPreencherTexto.Enabled = enabled;
             btnPreencherUsrTpb.Enabled = enabled;
             btnPreencherUsrTpbAdm1.Enabled = enabled;
             btnPreencherUsrTpbAdm2.Enabled = enabled;
             btnPreencherUsrTpItau.Enabled = enabled;
             btnPreencherUsrUol.Enabled = enabled;
+            btnPreencherUsrNlsa.Enabled = enabled;
+            btnPreencherTexto.Enabled = enabled;
         }
 
         private void SendUnicodeChar(char c)
@@ -225,12 +239,22 @@ namespace TPPreenchedor.Forms
             this.txtDadosPreencherUsrUol = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btnPreencherUsrUol = new System.Windows.Forms.Button();
+            this.groupBoxNlsa = new System.Windows.Forms.GroupBox();
+            this.txtDadosPreencherUsrNlsa = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnPreencherUsrNlsa = new System.Windows.Forms.Button();
+            this.groupBoxTexto = new System.Windows.Forms.GroupBox();
+            this.txtDadosPreencherTexto = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnPreencherTexto = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
             this.groupBoxTpb.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBoxNlsa.SuspendLayout();
+            this.groupBoxTexto.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDadosPreencherUsrTpb
@@ -377,6 +401,7 @@ namespace TPPreenchedor.Forms
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Usr Tpitau";
+            this.groupBox3.Visible = false;
             // 
             // txtDadosPreencherUsrTpItau
             // 
@@ -415,6 +440,7 @@ namespace TPPreenchedor.Forms
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Usr Uol";
+            this.groupBox4.Visible = false;
             // 
             // txtDadosPreencherUsrUol
             // 
@@ -442,11 +468,89 @@ namespace TPPreenchedor.Forms
             this.btnPreencherUsrUol.UseVisualStyleBackColor = true;
             this.btnPreencherUsrUol.Click += new System.EventHandler(this.btnPreencherUsrUol_Click);
             // 
+            // groupBoxNlsa
+            // 
+            this.groupBoxNlsa.Controls.Add(this.txtDadosPreencherUsrNlsa);
+            this.groupBoxNlsa.Controls.Add(this.label7);
+            this.groupBoxNlsa.Controls.Add(this.btnPreencherUsrNlsa);
+            this.groupBoxNlsa.Location = new System.Drawing.Point(11, 250);
+            this.groupBoxNlsa.Name = "groupBoxNlsa";
+            this.groupBoxNlsa.Size = new System.Drawing.Size(504, 57);
+            this.groupBoxNlsa.TabIndex = 9;
+            this.groupBoxNlsa.TabStop = false;
+            this.groupBoxNlsa.Text = "Usr Nlsa";
+            // 
+            // txtDadosPreencherUsrNlsa
+            // 
+            this.txtDadosPreencherUsrNlsa.Location = new System.Drawing.Point(160, 18);
+            this.txtDadosPreencherUsrNlsa.Name = "txtDadosPreencherUsrNlsa";
+            this.txtDadosPreencherUsrNlsa.Size = new System.Drawing.Size(180, 20);
+            this.txtDadosPreencherUsrNlsa.TabIndex = 0;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 22);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(116, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "PWD USUARIO NLSA";
+            // 
+            // btnPreencherUsrNlsa
+            // 
+            this.btnPreencherUsrNlsa.Location = new System.Drawing.Point(368, 13);
+            this.btnPreencherUsrNlsa.Name = "btnPreencherUsrNlsa";
+            this.btnPreencherUsrNlsa.Size = new System.Drawing.Size(97, 31);
+            this.btnPreencherUsrNlsa.TabIndex = 1;
+            this.btnPreencherUsrNlsa.Text = "PREENCHER";
+            this.btnPreencherUsrNlsa.UseVisualStyleBackColor = true;
+            this.btnPreencherUsrNlsa.Click += new System.EventHandler(this.btnPreencherUsrNlsa_Click);
+            // 
+            // groupBoxTexto
+            // 
+            this.groupBoxTexto.Controls.Add(this.txtDadosPreencherTexto);
+            this.groupBoxTexto.Controls.Add(this.label8);
+            this.groupBoxTexto.Controls.Add(this.btnPreencherTexto);
+            this.groupBoxTexto.Location = new System.Drawing.Point(11, 313);
+            this.groupBoxTexto.Name = "groupBoxTexto";
+            this.groupBoxTexto.Size = new System.Drawing.Size(504, 57);
+            this.groupBoxTexto.TabIndex = 10;
+            this.groupBoxTexto.TabStop = false;
+            this.groupBoxTexto.Text = "Texto";
+            // 
+            // txtDadosPreencherTexto
+            // 
+            this.txtDadosPreencherTexto.Location = new System.Drawing.Point(160, 18);
+            this.txtDadosPreencherTexto.Name = "txtDadosPreencherTexto";
+            this.txtDadosPreencherTexto.Size = new System.Drawing.Size(180, 20);
+            this.txtDadosPreencherTexto.TabIndex = 0;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(43, 13);
+            this.label8.TabIndex = 4;
+            this.label8.Text = "TEXTO";
+            // 
+            // btnPreencherTexto
+            // 
+            this.btnPreencherTexto.Location = new System.Drawing.Point(368, 13);
+            this.btnPreencherTexto.Name = "btnPreencherTexto";
+            this.btnPreencherTexto.Size = new System.Drawing.Size(97, 31);
+            this.btnPreencherTexto.TabIndex = 1;
+            this.btnPreencherTexto.Text = "PREENCHER";
+            this.btnPreencherTexto.UseVisualStyleBackColor = true;
+            this.btnPreencherTexto.Click += new System.EventHandler(this.btnPreencherTexto_Click);
+            // 
             // Preenchedor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(527, 374);
+            this.Controls.Add(this.groupBoxTexto);
+            this.Controls.Add(this.groupBoxNlsa);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -473,6 +577,10 @@ namespace TPPreenchedor.Forms
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBoxNlsa.ResumeLayout(false);
+            this.groupBoxNlsa.PerformLayout();
+            this.groupBoxTexto.ResumeLayout(false);
+            this.groupBoxTexto.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -496,6 +604,16 @@ namespace TPPreenchedor.Forms
         private async void btnPreencherUsrUol_Click(object sender, EventArgs e)
         {
             await PreencherTextoAsync(txtDadosPreencherUsrUol, "USR UOL");
+        }
+
+        private async void btnPreencherUsrNlsa_Click(object sender, EventArgs e)
+        {
+            await PreencherTextoAsync(txtDadosPreencherUsrNlsa, "USR NLSA");
+        }
+
+        private async void btnPreencherTexto_Click(object sender, EventArgs e)
+        {
+            await PreencherTextoAsync(txtDadosPreencherTexto, "TEXTO");
         }
 
         private void Preenchedor_Load(object sender, EventArgs e)
@@ -548,7 +666,9 @@ namespace TPPreenchedor.Forms
                 { LoginUsrTpbAdm1, txtDadosPreencherUsrTpbAdm1 },
                 { LoginUsrTpbAdm2, txtDadosPreencherUsrTpbAdm2 },
                 { LoginUsrTpItau, txtDadosPreencherUsrTpItau },
-                { LoginUsrUol, txtDadosPreencherUsrUol }
+                { LoginUsrUol, txtDadosPreencherUsrUol },
+                { LoginUsrNlsa, txtDadosPreencherUsrNlsa },
+                { LoginTextoLivre, txtDadosPreencherTexto }
             };
         }
 
