@@ -11,6 +11,11 @@
 *.sln.docstates
 *.env
 
+# Local credential database
+/TpPreenchedor.db
+*.db-shm
+*.db-wal
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

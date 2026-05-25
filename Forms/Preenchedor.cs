@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TPPreenchedor.Data;
 using TPPreenchedor.Data.Models;
@@ -31,6 +31,7 @@ namespace TPPreenchedor.Forms
             public HARDWAREINPUT hi;
         }
 
+#pragma warning disable 0649
         private struct MOUSEINPUT
         {
             public int dx;
@@ -67,6 +68,7 @@ namespace TPPreenchedor.Forms
 
             public short wParamH;
         }
+#pragma warning restore 0649
 
         private const int INPUT_KEYBOARD = 1;
 
@@ -102,6 +104,12 @@ namespace TPPreenchedor.Forms
         private Button btnPreencherUsrUol;
         private Label label2;
 
+        private const string LoginUsrTpb = @"tpb\palladino.11";
+        private const string LoginUsrTpbAdm1 = @"tpb\palladino.11-adm1";
+        private const string LoginUsrTpbAdm2 = @"tpb\palladino.11-adm2";
+        private const string LoginUsrTpItau = @"tpitau\palladino.11";
+        private const string LoginUsrUol = @"uol\palladino.11.uol";
+
         public Preenchedor()
         {
             InitializeComponent();
@@ -115,36 +123,52 @@ namespace TPPreenchedor.Forms
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
-        private void btnPreencherUsrTpb_Click(object sender, EventArgs e)
+        private async void btnPreencherUsrTpb_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDadosPreencherUsrTpb.Text))
+            await PreencherTextoAsync(txtDadosPreencherUsrTpb, "USR TPB");
+        }
+
+        private async Task PreencherTextoAsync(TextBox textBox, string descricao)
+        {
+            if (string.IsNullOrEmpty(textBox.Text))
             {
-                MessageBox.Show("Você precisa informar os dados para preencher USR TPB");
+                MessageBox.Show("Voce precisa informar os dados para preencher " + descricao);
                 return;
             }
+
             try
             {
-                btnPreencherUsrTpb.Enabled = false;
-                trackBar.Enabled = false;
-                txtDadosPreencherUsrTpb.Enabled = false;
-                Thread.Sleep(trackBar.Value * 1000);
-                string text = txtDadosPreencherUsrTpb.Text;
-                string text2 = text;
-                foreach (char c in text2)
+                SetControlesPreenchimentoEnabled(false);
+                await Task.Delay(trackBar.Value * 1000);
+
+                foreach (char c in textBox.Text)
                 {
                     SendUnicodeChar(c);
                 }
-                btnPreencherUsrTpb.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpb.Enabled = true;
             }
             catch (Exception ex)
             {
-                btnPreencherUsrTpb.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpb.Enabled = true;
-                MessageBox.Show("Ocorreu um erro inesperado: " + ex.Message);
+                MessageBox.Show(descricao + " - Ocorreu um erro inesperado: " + ex.Message);
             }
+            finally
+            {
+                SetControlesPreenchimentoEnabled(true);
+            }
+        }
+
+        private void SetControlesPreenchimentoEnabled(bool enabled)
+        {
+            trackBar.Enabled = enabled;
+            txtDadosPreencherUsrTpb.Enabled = enabled;
+            txtDadosPreencherUsrTpbAdm1.Enabled = enabled;
+            txtDadosPreencherUsrTpbAdm2.Enabled = enabled;
+            txtDadosPreencherUsrTpItau.Enabled = enabled;
+            txtDadosPreencherUsrUol.Enabled = enabled;
+            btnPreencherUsrTpb.Enabled = enabled;
+            btnPreencherUsrTpbAdm1.Enabled = enabled;
+            btnPreencherUsrTpbAdm2.Enabled = enabled;
+            btnPreencherUsrTpItau.Enabled = enabled;
+            btnPreencherUsrUol.Enabled = enabled;
         }
 
         private void SendUnicodeChar(char c)
@@ -454,193 +478,90 @@ namespace TPPreenchedor.Forms
 
         }
 
-        private void btnPreencherUsrTpbAdm1_Click(object sender, EventArgs e)
+        private async void btnPreencherUsrTpbAdm1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDadosPreencherUsrTpbAdm1.Text))
-            {
-                MessageBox.Show("Você precisa informar os dados para preencher USR ADM1");
-                return;
-            }
-            try
-            {
-                btnPreencherUsrTpbAdm1.Enabled = false;
-                trackBar.Enabled = false;
-                txtDadosPreencherUsrTpbAdm1.Enabled = false;
-                Thread.Sleep(trackBar.Value * 1000);
-                string text = txtDadosPreencherUsrTpbAdm1.Text;
-                string text2 = text;
-                foreach (char c in text2)
-                {
-                    SendUnicodeChar(c);
-                }
-                btnPreencherUsrTpbAdm1.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpbAdm1.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                btnPreencherUsrTpbAdm1.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpbAdm1.Enabled = true;
-                MessageBox.Show("ADM1 - Ocorreu um erro inesperado: " + ex.Message);
-            }
+            await PreencherTextoAsync(txtDadosPreencherUsrTpbAdm1, "USR ADM1");
         }
 
-        private void btnPreencherUsrTpbAdm2_Click(object sender, EventArgs e)
+        private async void btnPreencherUsrTpbAdm2_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDadosPreencherUsrTpbAdm2.Text))
-            {
-                MessageBox.Show("Você precisa informar os dados para preencher USR ADM2");
-                return;
-            }
-            try
-            {
-                btnPreencherUsrTpbAdm2.Enabled = false;
-                trackBar.Enabled = false;
-                txtDadosPreencherUsrTpbAdm2.Enabled = false;
-                Thread.Sleep(trackBar.Value * 1000);
-                string text = txtDadosPreencherUsrTpbAdm2.Text;
-                string text2 = text;
-                foreach (char c in text2)
-                {
-                    SendUnicodeChar(c);
-                }
-                btnPreencherUsrTpbAdm2.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpbAdm2.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                btnPreencherUsrTpbAdm2.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpbAdm2.Enabled = true;
-                MessageBox.Show("ADM2 - Ocorreu um erro inesperado: " + ex.Message);
-            }
+            await PreencherTextoAsync(txtDadosPreencherUsrTpbAdm2, "USR ADM2");
         }
 
-        private void btnPreencherUsrTpItau_Click(object sender, EventArgs e)
+        private async void btnPreencherUsrTpItau_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDadosPreencherUsrTpItau.Text))
-            {
-                MessageBox.Show("Você precisa informar os dados para preencher USR ITAU");
-                return;
-            }
-            try
-            {
-                btnPreencherUsrTpItau.Enabled = false;
-                trackBar.Enabled = false;
-                txtDadosPreencherUsrTpItau.Enabled = false;
-                Thread.Sleep(trackBar.Value * 1000);
-                string text = txtDadosPreencherUsrTpItau.Text;
-                string text2 = text;
-                foreach (char c in text2)
-                {
-                    SendUnicodeChar(c);
-                }
-                btnPreencherUsrTpItau.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpItau.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                btnPreencherUsrTpItau.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrTpItau.Enabled = true;
-                MessageBox.Show("USR ITAU - Ocorreu um erro inesperado: " + ex.Message);
-            }
+            await PreencherTextoAsync(txtDadosPreencherUsrTpItau, "USR ITAU");
         }
 
-        private void btnPreencherUsrUol_Click(object sender, EventArgs e)
+        private async void btnPreencherUsrUol_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDadosPreencherUsrUol.Text))
-            {
-                MessageBox.Show("Você precisa informar os dados para preencher USR UOL");
-                return;
-            }
-            try
-            {
-                btnPreencherUsrUol.Enabled = false;
-                trackBar.Enabled = false;
-                txtDadosPreencherUsrUol.Enabled = false;
-                Thread.Sleep(trackBar.Value * 1000);
-                string text = txtDadosPreencherUsrUol.Text;
-                string text2 = text;
-                foreach (char c in text2)
-                {
-                    SendUnicodeChar(c);
-                }
-                btnPreencherUsrUol.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrUol.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                btnPreencherUsrUol.Enabled = true;
-                trackBar.Enabled = true;
-                txtDadosPreencherUsrUol.Enabled = true;
-                MessageBox.Show("USR UOL - Ocorreu um erro inesperado: " + ex.Message);
-            }
+            await PreencherTextoAsync(txtDadosPreencherUsrUol, "USR UOL");
         }
 
         private void Preenchedor_Load(object sender, EventArgs e)
         {
-            var usuarioRepo = new UsuarioRepository();
-
-            // Exibindo todos os usuários
-            var usuarios = usuarioRepo.ObterTodosUsuarios();
-
-            foreach (var usuario in usuarios)
+            try
             {
-                Console.WriteLine($"ID: {usuario.Id}, Login: {usuario.Login}, Senha: {usuario.Senha}");
+                using (var usuarioRepo = new UsuarioRepository())
+                {
+                    var campos = ObterCamposCredenciais();
+                    var senhasPorLogin = usuarioRepo.ObterSenhasPorLogin(campos.Keys);
+
+                    foreach (var campo in campos)
+                    {
+                        string senha;
+
+                        if (senhasPorLogin.TryGetValue(campo.Key, out senha))
+                        {
+                            campo.Value.Text = senha;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocorreu um erro ao carregar as credenciais: " + ex.Message);
             }
         }
 
         private void Preenchedor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var usuarioRepo = new UsuarioRepository();
-
-            var lista = new List<Usuario>();
-
-            lista.Add(new Usuario()
+            try
             {
-                Login = @"tpb\palladino.11",
-                Senha = txtDadosPreencherUsrTpb.Text.Trim()
-            });
-
-
-            //lista.Add(new LoginSenha()
-            //{
-            //    Login = @"tpb\palladino.11-adm1",
-            //    Senha = txtDadosPreencherUsrTpbAdm1.Text.Trim()
-            //});
-
-
-            //lista.Add(new LoginSenha()
-            //{
-            //    Login = @"tpb\palladino.11-adm2",
-            //    Senha = txtDadosPreencherUsrTpbAdm2.Text.Trim()
-            //});
-
-            //lista.Add(new LoginSenha()
-            //{
-            //    Login = @"tpitau\palladino.11",
-            //    Senha = txtDadosPreencherUsrTpItau.Text.Trim()
-            //});
-
-            //lista.Add(new LoginSenha()
-            //{
-            //    Login = @"uol\palladino.11.uol",
-            //    Senha = txtDadosPreencherUsrUol.Text.Trim()
-            //});
-
-            var _usr = new Usuario()
+                using (var usuarioRepo = new UsuarioRepository())
+                {
+                    usuarioRepo.SalvarUsuarios(ObterUsuariosDaTela());
+                }
+            }
+            catch (Exception ex)
             {
-                Login = @"tpb\palladino.11",
-                Senha = txtDadosPreencherUsrTpb.Text.Trim()
+                e.Cancel = true;
+                MessageBox.Show("Ocorreu um erro ao salvar as credenciais: " + ex.Message);
+            }
+        }
+
+        private Dictionary<string, TextBox> ObterCamposCredenciais()
+        {
+            return new Dictionary<string, TextBox>
+            {
+                { LoginUsrTpb, txtDadosPreencherUsrTpb },
+                { LoginUsrTpbAdm1, txtDadosPreencherUsrTpbAdm1 },
+                { LoginUsrTpbAdm2, txtDadosPreencherUsrTpbAdm2 },
+                { LoginUsrTpItau, txtDadosPreencherUsrTpItau },
+                { LoginUsrUol, txtDadosPreencherUsrUol }
             };
+        }
 
-            var usuarioParaAtualizar = _usr;
-            usuarioRepo.AtualizarUsuario(usuarioParaAtualizar);
+        private IEnumerable<Usuario> ObterUsuariosDaTela()
+        {
+            foreach (var campo in ObterCamposCredenciais())
+            {
+                yield return new Usuario
+                {
+                    Login = campo.Key,
+                    Senha = campo.Value.Text.Trim()
+                };
+            }
         }
     }
 }
