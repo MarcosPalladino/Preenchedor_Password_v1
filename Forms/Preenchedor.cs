@@ -131,6 +131,14 @@ namespace TPPreenchedor.Forms
         private TextBox txtDadosPreencherTexto;
         private Label label8;
         private Button btnPreencherTexto;
+        private GroupBox groupBoxTexto2;
+        private TextBox txtDadosPreencherTexto2;
+        private Label labelTexto2;
+        private Button btnPreencherTexto2;
+        private GroupBox groupBoxTexto3;
+        private TextBox txtDadosPreencherTexto3;
+        private Label labelTexto3;
+        private Button btnPreencherTexto3;
         private Label label2;
         private Label labelModoEnvio;
         private ComboBox cmbModoEnvio;
@@ -142,6 +150,8 @@ namespace TPPreenchedor.Forms
         private const string LoginUsrUol = @"uol\palladino.11.uol";
         private const string LoginUsrNlsa = @"nlsa\palladino.11";
         private const string LoginTextoLivre = "texto_livre";
+        private const string LoginTextoLivre2 = "texto_livre_2";
+        private const string LoginTextoLivre3 = "texto_livre_3";
 
         public Preenchedor()
         {
@@ -254,6 +264,8 @@ namespace TPPreenchedor.Forms
             txtDadosPreencherUsrUol.Enabled = enabled;
             txtDadosPreencherUsrNlsa.Enabled = enabled;
             txtDadosPreencherTexto.Enabled = enabled;
+            txtDadosPreencherTexto2.Enabled = enabled;
+            txtDadosPreencherTexto3.Enabled = enabled;
             btnPreencherUsrTpb.Enabled = enabled;
             btnPreencherUsrTpbAdm1.Enabled = enabled;
             btnPreencherUsrTpbAdm2.Enabled = enabled;
@@ -261,6 +273,8 @@ namespace TPPreenchedor.Forms
             btnPreencherUsrUol.Enabled = enabled;
             btnPreencherUsrNlsa.Enabled = enabled;
             btnPreencherTexto.Enabled = enabled;
+            btnPreencherTexto2.Enabled = enabled;
+            btnPreencherTexto3.Enabled = enabled;
         }
 
         private ModoEnvio ObterModoEnvioSelecionado()
@@ -461,6 +475,14 @@ namespace TPPreenchedor.Forms
             this.txtDadosPreencherTexto = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnPreencherTexto = new System.Windows.Forms.Button();
+            this.groupBoxTexto2 = new System.Windows.Forms.GroupBox();
+            this.txtDadosPreencherTexto2 = new System.Windows.Forms.TextBox();
+            this.labelTexto2 = new System.Windows.Forms.Label();
+            this.btnPreencherTexto2 = new System.Windows.Forms.Button();
+            this.groupBoxTexto3 = new System.Windows.Forms.GroupBox();
+            this.txtDadosPreencherTexto3 = new System.Windows.Forms.TextBox();
+            this.labelTexto3 = new System.Windows.Forms.Label();
+            this.btnPreencherTexto3 = new System.Windows.Forms.Button();
             this.labelModoEnvio = new System.Windows.Forms.Label();
             this.cmbModoEnvio = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
@@ -471,6 +493,8 @@ namespace TPPreenchedor.Forms
             this.groupBox4.SuspendLayout();
             this.groupBoxNlsa.SuspendLayout();
             this.groupBoxTexto.SuspendLayout();
+            this.groupBoxTexto2.SuspendLayout();
+            this.groupBoxTexto3.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDadosPreencherUsrTpb
@@ -782,11 +806,89 @@ namespace TPPreenchedor.Forms
             this.btnPreencherTexto.UseVisualStyleBackColor = true;
             this.btnPreencherTexto.Click += new System.EventHandler(this.btnPreencherTexto_Click);
             // 
+            // groupBoxTexto2
+            // 
+            this.groupBoxTexto2.Controls.Add(this.txtDadosPreencherTexto2);
+            this.groupBoxTexto2.Controls.Add(this.labelTexto2);
+            this.groupBoxTexto2.Controls.Add(this.btnPreencherTexto2);
+            this.groupBoxTexto2.Location = new System.Drawing.Point(11, 376);
+            this.groupBoxTexto2.Name = "groupBoxTexto2";
+            this.groupBoxTexto2.Size = new System.Drawing.Size(504, 57);
+            this.groupBoxTexto2.TabIndex = 13;
+            this.groupBoxTexto2.TabStop = false;
+            this.groupBoxTexto2.Text = "Texto 2";
+            // 
+            // txtDadosPreencherTexto2
+            // 
+            this.txtDadosPreencherTexto2.Location = new System.Drawing.Point(160, 18);
+            this.txtDadosPreencherTexto2.Name = "txtDadosPreencherTexto2";
+            this.txtDadosPreencherTexto2.Size = new System.Drawing.Size(180, 20);
+            this.txtDadosPreencherTexto2.TabIndex = 0;
+            // 
+            // labelTexto2
+            // 
+            this.labelTexto2.AutoSize = true;
+            this.labelTexto2.Location = new System.Drawing.Point(9, 22);
+            this.labelTexto2.Name = "labelTexto2";
+            this.labelTexto2.Size = new System.Drawing.Size(52, 13);
+            this.labelTexto2.TabIndex = 4;
+            this.labelTexto2.Text = "TEXTO 2";
+            // 
+            // btnPreencherTexto2
+            // 
+            this.btnPreencherTexto2.Location = new System.Drawing.Point(368, 13);
+            this.btnPreencherTexto2.Name = "btnPreencherTexto2";
+            this.btnPreencherTexto2.Size = new System.Drawing.Size(97, 31);
+            this.btnPreencherTexto2.TabIndex = 1;
+            this.btnPreencherTexto2.Text = "PREENCHER";
+            this.btnPreencherTexto2.UseVisualStyleBackColor = true;
+            this.btnPreencherTexto2.Click += new System.EventHandler(this.btnPreencherTexto2_Click);
+            // 
+            // groupBoxTexto3
+            // 
+            this.groupBoxTexto3.Controls.Add(this.txtDadosPreencherTexto3);
+            this.groupBoxTexto3.Controls.Add(this.labelTexto3);
+            this.groupBoxTexto3.Controls.Add(this.btnPreencherTexto3);
+            this.groupBoxTexto3.Location = new System.Drawing.Point(11, 439);
+            this.groupBoxTexto3.Name = "groupBoxTexto3";
+            this.groupBoxTexto3.Size = new System.Drawing.Size(504, 57);
+            this.groupBoxTexto3.TabIndex = 14;
+            this.groupBoxTexto3.TabStop = false;
+            this.groupBoxTexto3.Text = "Texto 3";
+            // 
+            // txtDadosPreencherTexto3
+            // 
+            this.txtDadosPreencherTexto3.Location = new System.Drawing.Point(160, 18);
+            this.txtDadosPreencherTexto3.Name = "txtDadosPreencherTexto3";
+            this.txtDadosPreencherTexto3.Size = new System.Drawing.Size(180, 20);
+            this.txtDadosPreencherTexto3.TabIndex = 0;
+            // 
+            // labelTexto3
+            // 
+            this.labelTexto3.AutoSize = true;
+            this.labelTexto3.Location = new System.Drawing.Point(9, 22);
+            this.labelTexto3.Name = "labelTexto3";
+            this.labelTexto3.Size = new System.Drawing.Size(52, 13);
+            this.labelTexto3.TabIndex = 4;
+            this.labelTexto3.Text = "TEXTO 3";
+            // 
+            // btnPreencherTexto3
+            // 
+            this.btnPreencherTexto3.Location = new System.Drawing.Point(368, 13);
+            this.btnPreencherTexto3.Name = "btnPreencherTexto3";
+            this.btnPreencherTexto3.Size = new System.Drawing.Size(97, 31);
+            this.btnPreencherTexto3.TabIndex = 1;
+            this.btnPreencherTexto3.Text = "PREENCHER";
+            this.btnPreencherTexto3.UseVisualStyleBackColor = true;
+            this.btnPreencherTexto3.Click += new System.EventHandler(this.btnPreencherTexto3_Click);
+            // 
             // Preenchedor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 374);
+            this.ClientSize = new System.Drawing.Size(527, 505);
+            this.Controls.Add(this.groupBoxTexto3);
+            this.Controls.Add(this.groupBoxTexto2);
             this.Controls.Add(this.groupBoxTexto);
             this.Controls.Add(this.groupBoxNlsa);
             this.Controls.Add(this.groupBox4);
@@ -822,6 +924,10 @@ namespace TPPreenchedor.Forms
             this.groupBoxNlsa.PerformLayout();
             this.groupBoxTexto.ResumeLayout(false);
             this.groupBoxTexto.PerformLayout();
+            this.groupBoxTexto2.ResumeLayout(false);
+            this.groupBoxTexto2.PerformLayout();
+            this.groupBoxTexto3.ResumeLayout(false);
+            this.groupBoxTexto3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -855,6 +961,16 @@ namespace TPPreenchedor.Forms
         private async void btnPreencherTexto_Click(object sender, EventArgs e)
         {
             await PreencherTextoAsync(txtDadosPreencherTexto, "TEXTO");
+        }
+
+        private async void btnPreencherTexto2_Click(object sender, EventArgs e)
+        {
+            await PreencherTextoAsync(txtDadosPreencherTexto2, "TEXTO 2");
+        }
+
+        private async void btnPreencherTexto3_Click(object sender, EventArgs e)
+        {
+            await PreencherTextoAsync(txtDadosPreencherTexto3, "TEXTO 3");
         }
 
         private void Preenchedor_Load(object sender, EventArgs e)
@@ -909,7 +1025,9 @@ namespace TPPreenchedor.Forms
                 { LoginUsrTpItau, txtDadosPreencherUsrTpItau },
                 { LoginUsrUol, txtDadosPreencherUsrUol },
                 { LoginUsrNlsa, txtDadosPreencherUsrNlsa },
-                { LoginTextoLivre, txtDadosPreencherTexto }
+                { LoginTextoLivre, txtDadosPreencherTexto },
+                { LoginTextoLivre2, txtDadosPreencherTexto2 },
+                { LoginTextoLivre3, txtDadosPreencherTexto3 }
             };
         }
 
