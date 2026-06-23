@@ -72,9 +72,30 @@ namespace TPPreenchedor.Forms
 
         private const int INPUT_KEYBOARD = 1;
 
+        private const int KEYEVENTF_EXTENDEDKEY = 1;
+
         private const int KEYEVENTF_UNICODE = 4;
 
         private const int KEYEVENTF_KEYUP = 2;
+
+        private const int KEYEVENTF_SCANCODE = 8;
+
+        private const uint MAPVK_VK_TO_VSC_EX = 4;
+
+        private const int VK_SHIFT = 0x10;
+
+        private const int VK_CONTROL = 0x11;
+
+        private const int VK_MENU = 0x12;
+
+        private const int VK_CAPITAL = 0x14;
+
+        private enum ModoEnvio
+        {
+            Automatico = 0,
+            TecladoFisico = 1,
+            UnicodeLegado = 2
+        }
 
         private IContainer components = null;
 
@@ -111,6 +132,8 @@ namespace TPPreenchedor.Forms
         private Label label8;
         private Button btnPreencherTexto;
         private Label label2;
+        private Label labelModoEnvio;
+        private ComboBox cmbModoEnvio;
 
         private const string LoginUsrTpb = @"tpb\palladino.11";
         private const string LoginUsrTpbAdm1 = @"tpb\palladino.11-adm1";
@@ -133,6 +156,24 @@ namespace TPPreenchedor.Forms
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport("user32.dll", EntryPoint = "VkKeyScanExW", CharSet = CharSet.Unicode)]
+        private static extern short VkKeyScanEx(char ch, IntPtr dwhkl);
+
+        [DllImport("user32.dll")]
+        private static extern uint MapVirtualKeyEx(uint uCode, uint uMapType, IntPtr dwhkl);
+
+        [DllImport("user32.dll")]
+        private static extern short GetKeyState(int nVirtKey);
+
         private async void btnPreencherUsrTpb_Click(object sender, EventArgs e)
         {
             await PreencherTextoAsync(txtDadosPreencherUsrTpb, "USR TPB");
@@ -150,10 +191,46 @@ namespace TPPreenchedor.Forms
             {
                 SetControlesPreenchimentoEnabled(false);
                 await Task.Delay(trackBar.Value * 1000);
+                var modoEnvio = ObterModoEnvioSelecionado();
 
-                foreach (char c in textBox.Text)
+                if (modoEnvio == ModoEnvio.UnicodeLegado)
                 {
-                    SendUnicodeChar(c);
+                    foreach (char c in textBox.Text)
+                    {
+                        SendUnicodeChar(c);
+                        await Task.Delay(5);
+                    }
+
+                    return;
+                }
+
+                var keyboardLayout = GetFocusedWindowKeyboardLayout();
+                var restoreCapsLock = IsCapsLockOn();
+                var capsLockTurnedOff = false;
+                if (restoreCapsLock)
+                {
+                    ToggleVirtualKey(VK_CAPITAL, keyboardLayout);
+                    capsLockTurnedOff = true;
+                }
+
+                try
+                {
+                    ReleaseModifierKeys(keyboardLayout);
+
+                    foreach (char c in textBox.Text)
+                    {
+                        SendExactChar(c, keyboardLayout, modoEnvio == ModoEnvio.Automatico);
+                        await Task.Delay(5);
+                    }
+                }
+                finally
+                {
+                    ReleaseModifierKeys(keyboardLayout);
+
+                    if (capsLockTurnedOff && !IsCapsLockOn())
+                    {
+                        ToggleVirtualKey(VK_CAPITAL, keyboardLayout);
+                    }
                 }
             }
             catch (Exception ex)
@@ -169,6 +246,7 @@ namespace TPPreenchedor.Forms
         private void SetControlesPreenchimentoEnabled(bool enabled)
         {
             trackBar.Enabled = enabled;
+            cmbModoEnvio.Enabled = enabled;
             txtDadosPreencherUsrTpb.Enabled = enabled;
             txtDadosPreencherUsrTpbAdm1.Enabled = enabled;
             txtDadosPreencherUsrTpbAdm2.Enabled = enabled;
@@ -185,20 +263,156 @@ namespace TPPreenchedor.Forms
             btnPreencherTexto.Enabled = enabled;
         }
 
+        private ModoEnvio ObterModoEnvioSelecionado()
+        {
+            if (cmbModoEnvio == null)
+            {
+                return ModoEnvio.Automatico;
+            }
+
+            if (cmbModoEnvio.SelectedIndex == (int)ModoEnvio.TecladoFisico)
+            {
+                return ModoEnvio.TecladoFisico;
+            }
+
+            if (cmbModoEnvio.SelectedIndex == (int)ModoEnvio.UnicodeLegado)
+            {
+                return ModoEnvio.UnicodeLegado;
+            }
+
+            return ModoEnvio.Automatico;
+        }
+
+        private IntPtr GetFocusedWindowKeyboardLayout()
+        {
+            var foregroundWindow = GetForegroundWindow();
+            if (foregroundWindow == IntPtr.Zero)
+            {
+                return GetKeyboardLayout(0);
+            }
+
+            var threadId = GetWindowThreadProcessId(foregroundWindow, IntPtr.Zero);
+            return GetKeyboardLayout(threadId);
+        }
+
+        private bool IsCapsLockOn()
+        {
+            return (GetKeyState(VK_CAPITAL) & 1) == 1;
+        }
+
+        private void SendExactChar(char c, IntPtr keyboardLayout, bool permitirFallbackUnicode)
+        {
+            var keyScan = VkKeyScanEx(c, keyboardLayout);
+            if (keyScan == -1)
+            {
+                if (!permitirFallbackUnicode)
+                {
+                    throw new Exception("Nao foi possivel mapear um caractere para o layout ativo.");
+                }
+
+                SendUnicodeChar(c);
+                return;
+            }
+
+            var virtualKey = keyScan & 0xFF;
+            var shiftState = (keyScan >> 8) & 0xFF;
+            var requiresShift = (shiftState & 1) == 1;
+            var requiresControl = (shiftState & 2) == 2;
+            var requiresAlt = (shiftState & 4) == 4;
+
+            if (requiresControl)
+            {
+                SendVirtualKey(VK_CONTROL, false, keyboardLayout);
+            }
+
+            if (requiresAlt)
+            {
+                SendVirtualKey(VK_MENU, false, keyboardLayout);
+            }
+
+            if (requiresShift)
+            {
+                SendVirtualKey(VK_SHIFT, false, keyboardLayout);
+            }
+
+            SendVirtualKey(virtualKey, false, keyboardLayout);
+            SendVirtualKey(virtualKey, true, keyboardLayout);
+
+            if (requiresShift)
+            {
+                SendVirtualKey(VK_SHIFT, true, keyboardLayout);
+            }
+
+            if (requiresAlt)
+            {
+                SendVirtualKey(VK_MENU, true, keyboardLayout);
+            }
+
+            if (requiresControl)
+            {
+                SendVirtualKey(VK_CONTROL, true, keyboardLayout);
+            }
+        }
+
+        private void ReleaseModifierKeys(IntPtr keyboardLayout)
+        {
+            SendVirtualKey(VK_SHIFT, true, keyboardLayout);
+            SendVirtualKey(VK_MENU, true, keyboardLayout);
+            SendVirtualKey(VK_CONTROL, true, keyboardLayout);
+        }
+
+        private void ToggleVirtualKey(int virtualKey, IntPtr keyboardLayout)
+        {
+            SendVirtualKey(virtualKey, false, keyboardLayout);
+            SendVirtualKey(virtualKey, true, keyboardLayout);
+        }
+
+        private void SendVirtualKey(int virtualKey, bool keyUp, IntPtr keyboardLayout)
+        {
+            var scanCode = MapVirtualKeyEx((uint)virtualKey, MAPVK_VK_TO_VSC_EX, keyboardLayout);
+            if (scanCode == 0)
+            {
+                throw new Exception("Nao foi possivel mapear uma tecla para o layout ativo.");
+            }
+
+            INPUT[] array = new INPUT[1];
+            array[0].type = INPUT_KEYBOARD;
+            array[0].u.ki.wVk = 0;
+            array[0].u.ki.wScan = (short)(scanCode & 0xFF);
+            array[0].u.ki.dwFlags = KEYEVENTF_SCANCODE;
+            array[0].u.ki.time = 0;
+            array[0].u.ki.dwExtraInfo = IntPtr.Zero;
+
+            if ((scanCode & 0xFF00) != 0)
+            {
+                array[0].u.ki.dwFlags |= KEYEVENTF_EXTENDEDKEY;
+            }
+
+            if (keyUp)
+            {
+                array[0].u.ki.dwFlags |= KEYEVENTF_KEYUP;
+            }
+
+            if (SendInput(1u, array, Marshal.SizeOf((object)array[0])) == 0)
+            {
+                throw new Exception("Erro ao enviar entrada de teclado");
+            }
+        }
+
         private void SendUnicodeChar(char c)
         {
             INPUT[] array = new INPUT[1];
-            array[0].type = 1;
+            array[0].type = INPUT_KEYBOARD;
             array[0].u.ki.wVk = 0;
             array[0].u.ki.wScan = (short)c;
-            array[0].u.ki.dwFlags = 4;
+            array[0].u.ki.dwFlags = KEYEVENTF_UNICODE;
             array[0].u.ki.time = 0;
             array[0].u.ki.dwExtraInfo = IntPtr.Zero;
             if (SendInput(1u, array, Marshal.SizeOf((object)array[0])) == 0)
             {
                 throw new Exception("Erro ao enviar entrada de teclado");
             }
-            array[0].u.ki.dwFlags |= 2;
+            array[0].u.ki.dwFlags |= KEYEVENTF_KEYUP;
             if (SendInput(1u, array, Marshal.SizeOf((object)array[0])) == 0)
             {
                 throw new Exception("Erro ao enviar entrada de teclado");
@@ -247,6 +461,8 @@ namespace TPPreenchedor.Forms
             this.txtDadosPreencherTexto = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btnPreencherTexto = new System.Windows.Forms.Button();
+            this.labelModoEnvio = new System.Windows.Forms.Label();
+            this.cmbModoEnvio = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
             this.groupBoxTpb.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -292,6 +508,28 @@ namespace TPPreenchedor.Forms
             this.label1.Size = new System.Drawing.Size(149, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "TEMPO DE ESPERA (3 SEG)";
+            // 
+            // labelModoEnvio
+            // 
+            this.labelModoEnvio.AutoSize = true;
+            this.labelModoEnvio.Location = new System.Drawing.Point(386, 10);
+            this.labelModoEnvio.Name = "labelModoEnvio";
+            this.labelModoEnvio.Size = new System.Drawing.Size(39, 13);
+            this.labelModoEnvio.TabIndex = 11;
+            this.labelModoEnvio.Text = "MODO";
+            // 
+            // cmbModoEnvio
+            // 
+            this.cmbModoEnvio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbModoEnvio.FormattingEnabled = true;
+            this.cmbModoEnvio.Items.AddRange(new object[] {
+            "Automatico",
+            "Teclado fisico",
+            "Unicode legado"});
+            this.cmbModoEnvio.Location = new System.Drawing.Point(386, 29);
+            this.cmbModoEnvio.Name = "cmbModoEnvio";
+            this.cmbModoEnvio.Size = new System.Drawing.Size(129, 21);
+            this.cmbModoEnvio.TabIndex = 12;
             // 
             // label2
             // 
@@ -556,6 +794,8 @@ namespace TPPreenchedor.Forms
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxTpb);
+            this.Controls.Add(this.cmbModoEnvio);
+            this.Controls.Add(this.labelModoEnvio);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.trackBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -567,6 +807,7 @@ namespace TPPreenchedor.Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Preenchedor_FormClosing);
             this.Load += new System.EventHandler(this.Preenchedor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).EndInit();
+            this.cmbModoEnvio.SelectedIndex = 0;
             this.groupBoxTpb.ResumeLayout(false);
             this.groupBoxTpb.PerformLayout();
             this.groupBox1.ResumeLayout(false);
